@@ -3,8 +3,6 @@ import express from 'express'
 import { render } from 'src/after'
 import routes from 'src/routes'
 
-const assets = require(process.env.RAZZLE_ASSETS_MANIFEST)
-
 const server = express()
 server
   .disable('x-powered-by')
@@ -15,7 +13,6 @@ server
         req,
         res,
         routes,
-        assets,
       })
       res.send(html)
     } catch (error) {

@@ -2,8 +2,10 @@ import * as React from 'react'
 import * as ReactDOMServer from 'react-dom/server'
 import Helmet from 'react-helmet'
 import { matchPath, StaticRouter } from 'react-router-dom'
+import path from 'path'
+import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server'
 
-import { Document as DefaultDoc } from './Document'
+import { Document } from './Document'
 import { After } from './After'
 import { loadInitialProps } from './loadInitialProps'
 
@@ -20,18 +22,22 @@ const modPageFn = function (Page) {
   */
 
 export async function render (options) {
-  const { req, res, routes, assets, document: Document, customRenderer, ...rest } = options
-  const Doc = Document || DefaultDoc
+  const { req, res, routes, ...rest } = options
+
+  const extractor = new ChunkExtractor({
+    statsFile: path.resolve('build/loadable-stats.json'),
+    entrypoints: ['client'],
+  })
 
   const context = {}
   const renderPage = async (fn = modPageFn) => {
-    // By default, we keep ReactDOMServer synchronous renderToString function
-    const defaultRenderer = (element) => ({ html: ReactDOMServer.renderToString(element) })
-    const renderer = customRenderer || defaultRenderer
+    const renderer = (element) => ({ html: ReactDOMServer.renderToString(element) })
     const asyncOrSyncRender = renderer(
-      <StaticRouter location={req.url} context={context}>
-        {fn(After)({ routes, data })}
-      </StaticRouter>
+      <ChunkExtractorManager extractor={extractor}>
+        <StaticRouter location={req.url} context={context}>
+          {fn(After)({ routes, data })}
+        </StaticRouter>
+      </ChunkExtractorManager>
     )
 
     const renderedContent = await asyncOrSyncRender
@@ -60,10 +66,9 @@ export async function render (options) {
 
   const reactRouterMatch = matchPath(req.url, match)
 
-  const { html, ...docProps } = await Doc.getInitialProps({
+  const { html, ...docProps } = await Document.getInitialProps({
     req,
     res,
-    assets,
     renderPage,
     data,
     helmet: Helmet.renderStatic(),
@@ -71,6 +76,6 @@ export async function render (options) {
     ...rest,
   })
 
-  const doc = ReactDOMServer.renderToStaticMarkup(<Doc {...docProps} />)
+  const doc = ReactDOMServer.renderToStaticMarkup(<Document {...docProps} extractor={extractor} />)
   return `<!doctype html>${doc.replace('DO_NOT_DELETE_THIS_YOU_WILL_BREAK_YOUR_APP', html)}`
 }

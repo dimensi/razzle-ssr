@@ -40,7 +40,7 @@ export function findMatchedRoute (
 export function loadRouteComponent (
   route,
 ) {
-  if (route.component && isLoadableComponent(route.component) && route.component.load) {
+  if (route.component && isLoadableComponent(route.component)) {
     return route.component.load()
   } else {
     return Promise.resolve(route.component || null)

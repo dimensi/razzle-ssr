@@ -12,10 +12,9 @@ class Home extends Component {
   }
 
   render () {
-    console.log(this.props)
     return (
       <div className='Home'>
-        <Helmet titleTemplate='DigitalHorizon.ru - %s'>
+        <Helmet titleTemplate='SSR TEST - %s'>
           <title>Home</title>
         </Helmet>
         <div className='Home-header'>
@@ -26,6 +25,9 @@ class Home extends Component {
           To get started, edit
           <code>src/Home.js</code> or <code>src/About.js</code>and save to
           reload.
+        </p>
+        <p>
+          {this.props.stuff}
         </p>
         <Link to='about'>About -></Link>
         <Link to='notfound'>Error page</Link>

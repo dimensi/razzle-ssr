@@ -1,5 +1,4 @@
 import http from 'http'
-import Loadable from 'react-loadable'
 
 let app = require('./server').default
 
@@ -7,16 +6,14 @@ const server = http.createServer(app)
 
 let currentApp = app
 
-Loadable.preloadAll()
-  .then(() => {
-    server.listen(process.env.PORT || 3000, error => {
-      if (error) {
-        console.log(error)
-      }
+server.listen(process.env.PORT || 3000, error => {
+  if (error) {
+    console.log(error)
+  }
 
-      console.log('🚀 started')
-    })
-  })
+  console.log('🚀 started http://localhost:%s', process.env.PORT || 3000)
+})
+
 if (module.hot) {
   console.log('✅  Server-side HMR Enabled!')
 

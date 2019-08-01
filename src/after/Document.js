@@ -9,7 +9,7 @@ export class Document extends React.Component {
   }
 
   render () {
-    const { helmet, assets, data } = this.props
+    const { helmet, data, extractor } = this.props
     // get attributes from React Helmet
     const htmlAttrs = helmet.htmlAttributes.toComponent()
     const bodyAttrs = helmet.bodyAttributes.toComponent()
@@ -24,12 +24,21 @@ export class Document extends React.Component {
           {helmet.title.toComponent()}
           {helmet.meta.toComponent()}
           {helmet.link.toComponent()}
-          {assets.client.css && <link rel='stylesheet' href={assets.client.css} />}
+          {extractor.getLinkElements().map(el => (
+            React.cloneElement(el, {
+              crossOrigin: '',
+            })
+          ))}
+          {extractor.getStyleElements()}
         </head>
         <body {...bodyAttrs}>
           <AfterRoot />
           <AfterData data={data} />
-          <script type='text/javascript' src={assets.client.js} defer crossOrigin='anonymous' />
+          {extractor.getScriptElements().map(el => (
+            React.cloneElement(el, {
+              crossOrigin: '',
+            })
+          ))}
         </body>
       </html>
     )
