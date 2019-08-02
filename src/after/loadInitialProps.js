@@ -10,7 +10,7 @@ export async function loadInitialProps (routes, pathname, ctx) {
   if (route) {
     await loadRouteComponent(route)
   }
-  console.log(routes, matchedComponent)
+
   const initialPropsData =
     matchedComponent && match && isAsyncComponent(matchedComponent)
       ? await matchedComponent.getInitialProps({ match, ...ctx })

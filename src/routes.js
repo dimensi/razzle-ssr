@@ -1,4 +1,3 @@
-import React from 'react'
 import loadable from '@loadable/component'
 
 import { Error } from './Error'
@@ -12,9 +11,7 @@ export default [
   {
     path: '/about',
     exact: true,
-    component: loadable(() => import('./About'), {
-      fallback: <div>Loading...</div>,
-    }),
+    component: loadable(() => import('./About')),
   },
   {
     component: Error,
